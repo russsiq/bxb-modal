@@ -11,7 +11,7 @@ npm i bxb-modal --save-dev
 ### Getting started
 
 To start using `bxb-modal`, you need to do is plugin installation. Somewhere in your main app.js file:
-```js
+```html
 <template>
 <div class="">
     <button type="button" class="btn btn-sm btn-outline-secondary" @click.prevent="openModal()">Open modal</button>
@@ -37,7 +37,8 @@ To start using `bxb-modal`, you need to do is plugin installation. Somewhere in 
     </modal>
 </div>
 </template>
-
+```
+```js
 <script type="text/ecmascript-6">
 import Modal from 'bxb-modal'
 
