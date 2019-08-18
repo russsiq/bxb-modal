@@ -1,13 +1,13 @@
 <template>
 <transition name="modal__fade">
-    <div class="modal__overlay" @click="handleClick($event)">
-        <div class="modal__dialog">
+    <div class="modal__overlay" @click="handleClick">
+        <div class="modal__dialog" :class="sizeClass">
             <div class="modal__content">
-                <div class="modal__header" v-if="hasHeaderSlot()">
+                <div class="modal__header" v-if="hasHeaderSlot">
                     <h5 class="modal__title">
                         <slot name="modal__header" />
                     </h5>
-                    <button type="button" class="modal__close" @click="close()">&times;</button>
+                    <button type="button" class="modal__close" @click="close">&times;</button>
                 </div>
 
                 <div class="modal__body">
@@ -16,7 +16,7 @@
 
                 <div class="modal__footer">
                     <slot name="modal__footer">
-                        <button type="button" class="btn btn-outline-dark" @click="close()">Close</button>
+                        <button type="button" class="btn btn-outline-dark" @click="close">Close</button>
                     </slot>
                 </div>
             </div>
@@ -27,20 +27,45 @@
 
 <script type="text/ecmascript-6">
 export default {
+    name: 'bxb-modal',
+    props: {
+        size: {
+            String,
+            required: false,
+            default: 'medium',
+            validator: function(value) {
+                return ['small', 'medium', 'large'].indexOf(value) !== -1
+            }
+        }
+    },
+
     data() {
         return {
             //
         }
     },
 
+    computed: {
+        /**
+         * Show header slot only if it has a title.
+         */
+        hasHeaderSlot() {
+            return !!this.$slots.modal__header
+        },
+
+        sizeClass() {
+            return 'modal__dialog-' + this.$props.size
+        }
+    },
+
     created() {
-        document.addEventListener('keydown', this.handleEscape)
-        document.body.classList.add('overflow-hidden')
+        document.body.classList.add('overflow-hidden');
+        document.addEventListener('keydown', this.handleEscape);
     },
 
     destroyed() {
-        document.removeEventListener('keydown', this.handleEscape)
-        document.body.classList.remove('overflow-hidden')
+        document.body.classList.remove('overflow-hidden');
+        document.removeEventListener('keydown', this.handleEscape);
     },
 
     methods: {
@@ -48,35 +73,23 @@ export default {
          * Handle a click on the modal.
          */
         handleClick(event) {
-            if (event.target.classList.contains('modal__overlay')) {
-                this.close()
-            }
+            event.target.classList.contains('modal__overlay') && this.close();
         },
 
         /**
          * Handle a keydown `Esc` in the modal.
          */
         handleEscape(event) {
-            event.stopPropagation()
-
-            if (event.keyCode == 27) {
-                this.close()
-            }
+            event.stopPropagation();
+            event.keyCode == 27 && this.close();
         },
 
         /**
          * Close the modal.
          */
         close() {
-            this.$emit('close')
+            this.$emit('close');
         },
-
-        /**
-         * Show header slot only if it has a title.
-         */
-        hasHeaderSlot() {
-            return !!this.$slots.modal__header
-        }
     }
 }
 </script>
@@ -87,6 +100,7 @@ export default {
     &__fade-enter,
     &__fade-leave-active {
         opacity: 0;
+        transform: translate(0,0);
     }
 
     &__fade-enter .modal__dialog,
@@ -179,6 +193,16 @@ export default {
     .modal__dialog {
         max-width: 500px;
         margin: 1.8rem auto;
+    }
+
+    .modal__dialog-small {
+        max-width: 300px;
+    }
+}
+
+@media (min-width: 992px) {
+    .modal__dialog-large {
+        max-width: 800px;
     }
 }
 </style>
